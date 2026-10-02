@@ -1,0 +1,10 @@
+export const MAX_DAILY_CLASS_SESSIONS = 3;
+export const CLASS_COOLDOWN_HOURS = 2;
+export const CLASS_COOLDOWN_MS = CLASS_COOLDOWN_HOURS * 60 * 60 * 1000;
+export const INITIAL_SUBJECT_SCORE = 65;
+export const ATTENDANCE_SCORE_GAIN = 2;
+export const MAX_EDUCATION_EVENTS = 40;
+export const MAX_CLASS_DECISIONS_HISTORY = 120;
+export const EXAM_PERIOD_DAYS = 14;
+export const EXAM_PERIOD_MS = EXAM_PERIOD_DAYS * 24 * 60 * 60 * 1000;
+export const MAX_EXAMS_PROCESSED_ON_LOAD = 4;

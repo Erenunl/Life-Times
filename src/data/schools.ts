@@ -1,0 +1,16 @@
+import type { HighSchoolDefinition } from "../types/game";
+
+export const highSchools: HighSchoolDefinition[] = [
+  {
+    id: "school-newford-central-high",
+    name: "Newford Central High School",
+    cityId: "city-newford",
+    type: "high-school",
+  },
+];
+
+export const DEFAULT_HIGH_SCHOOL_ID = "school-newford-central-high";
+
+export function findHighSchoolById(schoolId: string): HighSchoolDefinition | undefined {
+  return highSchools.find((school) => school.id === schoolId);
+}
