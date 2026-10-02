@@ -20,6 +20,8 @@ import {
   saveCharacter,
 } from "./services/storage/characterStorage";
 import type { Character, EducationProgress } from "./types/game";
+import type { AppLanguage } from "./i18n/language";
+import { loadStoredLanguage, saveStoredLanguage } from "./i18n/language";
 
 const placeholderRoutes = [
   { path: "/character", title: "Character", description: "Character creation and personal details will live here." },
@@ -28,6 +30,7 @@ const placeholderRoutes = [
 ];
 
 export default function App() {
+  const [language, setLanguage] = useState<AppLanguage>(() => loadStoredLanguage());
   const [character, setCharacter] = useState<Character | null>(() => {
     const storedCharacter = loadCharacter();
 
@@ -61,6 +64,11 @@ export default function App() {
     setCharacter(activeCharacter);
   }
 
+  function handleLanguageChange(nextLanguage: AppLanguage) {
+    saveStoredLanguage(nextLanguage);
+    setLanguage(nextLanguage);
+  }
+
   function handleStartNewLife() {
     if (character?.isDeceased) {
       archiveDeceasedCharacter(character);
@@ -89,14 +97,23 @@ export default function App() {
       <Routes>
         <Route
           path="/create-character"
-          element={<CreateCharacterPage character={character} onCharacterCreated={handleCharacterCreated} />}
+          element={
+            <CreateCharacterPage
+              character={character}
+              language={language}
+              onCharacterCreated={handleCharacterCreated}
+              onLanguageChange={handleLanguageChange}
+            />
+          }
         />
         <Route
           element={
             <MainLayout
               character={character}
               educationProgress={educationProgress}
+              language={language}
               onEducationProgressChange={handleEducationProgressChange}
+              onLanguageChange={handleLanguageChange}
             />
           }
         >

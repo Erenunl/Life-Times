@@ -1,9 +1,9 @@
 import type { City } from "../types/game";
 
 export const cities: City[] = [
-  { id: "city-newford", name: "Newford", country: "Bellmare" },
-  { id: "city-bellmont", name: "Bellmont", country: "Bellmare" },
-  { id: "city-westhaven", name: "Westhaven", country: "Bellmare" },
+  { id: "city-istanbul", name: "Istanbul", country: "Turkey" },
+  { id: "city-izmir", name: "Izmir", country: "Turkey" },
+  { id: "city-ankara", name: "Ankara", country: "Turkey" },
 ];
 
 export function findCityById(cityId: string): City | undefined {

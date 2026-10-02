@@ -7,6 +7,7 @@ import {
 } from "../features/education/educationProgress";
 import { getUnacknowledgedExam } from "../features/education/examSystem";
 import { findSubjectById } from "../data/subjects";
+import type { AppLanguage } from "../i18n/language";
 import type { Character, EducationProgress, FormattedGameDate } from "../types/game";
 import { getGameDate } from "../utils/gameTime";
 
@@ -20,10 +21,18 @@ export type AppOutletContext = {
 type MainLayoutProps = {
   character: Character | null;
   educationProgress: EducationProgress | null;
+  language: AppLanguage;
   onEducationProgressChange: (progress: EducationProgress) => void;
+  onLanguageChange: (language: AppLanguage) => void;
 };
 
-export function MainLayout({ character, educationProgress, onEducationProgressChange }: MainLayoutProps) {
+export function MainLayout({
+  character,
+  educationProgress,
+  language,
+  onEducationProgressChange,
+  onLanguageChange,
+}: MainLayoutProps) {
   const gameDate = getGameDate();
 
   if (!character) {
@@ -43,7 +52,7 @@ export function MainLayout({ character, educationProgress, onEducationProgressCh
 
   return (
     <div className="app-shell">
-      <Header character={character} gameDate={gameDate} />
+      <Header character={character} gameDate={gameDate} language={language} onLanguageChange={onLanguageChange} />
       <MainNavigation />
       <main className="content-shell">
         <Outlet

@@ -5,8 +5,11 @@ import {
   STARTING_LIFE_STAGE,
   STARTING_MONEY,
 } from "../config/gameRules";
+import { LanguageSwitch } from "../components/LanguageSwitch";
 import { cities } from "../data/cities";
 import { createCharacter } from "../features/character/createCharacter";
+import type { AppLanguage } from "../i18n/language";
+import { commonCopy, createCharacterCopy } from "../i18n/language";
 import type { Character, Gender, ProfileImage } from "../types/game";
 import { formatGameDate, getBirthDateForAge, getGameDate } from "../utils/gameTime";
 import {
@@ -19,7 +22,9 @@ const BIOGRAPHY_MAX_LENGTH = 500;
 
 type CreateCharacterPageProps = {
   character: Character | null;
+  language: AppLanguage;
   onCharacterCreated: (character: Character) => void;
+  onLanguageChange: (language: AppLanguage) => void;
 };
 
 type FormErrors = Partial<{
@@ -31,8 +36,15 @@ type FormErrors = Partial<{
   profileImage: string;
 }>;
 
-export function CreateCharacterPage({ character, onCharacterCreated }: CreateCharacterPageProps) {
+export function CreateCharacterPage({
+  character,
+  language,
+  onCharacterCreated,
+  onLanguageChange,
+}: CreateCharacterPageProps) {
   const navigate = useNavigate();
+  const copy = createCharacterCopy[language];
+  const headerCopy = commonCopy[language];
   const currentGameDate = useMemo(() => getGameDate(), []);
   const generatedBirthDate = getBirthDateForAge(currentGameDate, STARTING_AGE);
 
@@ -67,7 +79,7 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
     } catch (error) {
       setErrors((currentErrors) => ({
         ...currentErrors,
-        profileImage: error instanceof Error ? error.message : "The selected image could not be used.",
+        profileImage: error instanceof Error ? error.message : copy.imageError,
       }));
     } finally {
       setIsProcessingImage(false);
@@ -102,23 +114,23 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
     const validationErrors: FormErrors = {};
 
     if (!firstName.trim()) {
-      validationErrors.firstName = "First name is required.";
+      validationErrors.firstName = copy.firstNameRequired;
     }
 
     if (!lastName.trim()) {
-      validationErrors.lastName = "Last name is required.";
+      validationErrors.lastName = copy.lastNameRequired;
     }
 
     if (!gender) {
-      validationErrors.gender = "Choose a gender option.";
+      validationErrors.gender = copy.genderRequired;
     }
 
     if (biography.length > BIOGRAPHY_MAX_LENGTH) {
-      validationErrors.biography = `Biography must be ${BIOGRAPHY_MAX_LENGTH} characters or fewer.`;
+      validationErrors.biography = copy.biographyTooLong.replace("{limit}", String(BIOGRAPHY_MAX_LENGTH));
     }
 
     if (!cities.some((city) => city.id === cityId)) {
-      validationErrors.cityId = "Choose a starting city.";
+      validationErrors.cityId = copy.cityRequired;
     }
 
     return validationErrors;
@@ -131,38 +143,41 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
           <span className="brand-mark">L&T</span>
           <div>
             <h1>Life & Times</h1>
-            <p>Create your local player profile</p>
+            <p>{copy.tagline}</p>
           </div>
         </div>
-        <dl className="status-strip" aria-label="Starting rules">
-          <div>
-            <dt>Age</dt>
-            <dd>{STARTING_AGE}</dd>
-          </div>
-          <div>
-            <dt>Life stage</dt>
-            <dd>High School</dd>
-          </div>
-          <div>
-            <dt>Money</dt>
-            <dd>${STARTING_MONEY.toLocaleString()}</dd>
-          </div>
-        </dl>
+        <div className="header-actions">
+          <LanguageSwitch language={language} onLanguageChange={onLanguageChange} label={headerCopy.languageLabel} />
+          <dl className="status-strip" aria-label={copy.startingRules}>
+            <div>
+              <dt>{copy.age}</dt>
+              <dd>{STARTING_AGE}</dd>
+            </div>
+            <div>
+              <dt>{copy.lifeStage}</dt>
+              <dd>{copy.highSchool}</dd>
+            </div>
+            <div>
+              <dt>{headerCopy.money}</dt>
+              <dd>${STARTING_MONEY.toLocaleString()}</dd>
+            </div>
+          </dl>
+        </div>
       </header>
 
       <main className="content-shell">
         <form className="creation-layout" onSubmit={handleSubmit} noValidate>
           <section className="creation-panel profile-panel">
-            <h2>Profile Photo</h2>
+            <h2>{copy.profilePhoto}</h2>
             <div className="portrait-preview">
               {profileImage ? (
-                <img src={profileImage.dataUrl} alt="Profile preview" />
+                <img src={profileImage.dataUrl} alt={copy.profilePreviewAlt} />
               ) : (
-                <span>No photo</span>
+                <span>{copy.noPhoto}</span>
               )}
             </div>
             <label className="file-control">
-              Upload JPEG, PNG, or WebP
+              {copy.uploadImage}
               <input
                 type="file"
                 accept={ALLOWED_PROFILE_IMAGE_TYPES.join(",")}
@@ -170,43 +185,43 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
               />
             </label>
             <p className="muted">
-              Max size: {Math.round(MAX_PROFILE_IMAGE_BYTES / 1024 / 1024)} MB. Images are cropped to 512x512 locally.
+              {copy.maxImageSize.replace("{size}", String(Math.round(MAX_PROFILE_IMAGE_BYTES / 1024 / 1024)))}
             </p>
-            {isProcessingImage ? <p className="field-note">Processing image...</p> : null}
+            {isProcessingImage ? <p className="field-note">{copy.processingImage}</p> : null}
             {errors.profileImage ? <p className="field-error">{errors.profileImage}</p> : null}
           </section>
 
           <section className="creation-panel">
-            <h2>Character Information</h2>
+            <h2>{copy.characterInformation}</h2>
             <div className="form-grid">
               <label>
-                First name
+                {copy.firstName}
                 <input value={firstName} onChange={(event) => setFirstName(event.target.value)} />
                 {errors.firstName ? <span className="field-error">{errors.firstName}</span> : null}
               </label>
 
               <label>
-                Last name
+                {copy.lastName}
                 <input value={lastName} onChange={(event) => setLastName(event.target.value)} />
                 {errors.lastName ? <span className="field-error">{errors.lastName}</span> : null}
               </label>
 
               <label>
-                Gender
+                {copy.gender}
                 <select value={gender} onChange={(event) => setGender(event.target.value as Gender | "")}>
-                  <option value="">Choose...</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                  <option value="non-binary">Non-binary</option>
-                  <option value="unspecified">Prefer not to say</option>
+                  <option value="">{copy.choose}</option>
+                  <option value="female">{copy.female}</option>
+                  <option value="male">{copy.male}</option>
+                  <option value="non-binary">{copy.nonBinary}</option>
+                  <option value="unspecified">{copy.preferNotToSay}</option>
                 </select>
                 {errors.gender ? <span className="field-error">{errors.gender}</span> : null}
               </label>
 
               <label>
-                Starting city
+                {copy.startingCity}
                 <select value={cityId} onChange={(event) => setCityId(event.target.value)}>
-                  <option value="">Choose...</option>
+                  <option value="">{copy.choose}</option>
                   {cities.map((city) => (
                     <option key={city.id} value={city.id}>
                       {city.name}
@@ -219,24 +234,24 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
 
             <dl className="fixed-rules">
               <div>
-                <dt>Generated birth date</dt>
+                <dt>{copy.generatedBirthDate}</dt>
                 <dd>{formatGameDate(generatedBirthDate)}</dd>
               </div>
               <div>
-                <dt>Education status</dt>
-                <dd>High School Student</dd>
+                <dt>{copy.educationStatus}</dt>
+                <dd>{copy.highSchoolStudent}</dd>
               </div>
               <div>
-                <dt>Starting stage</dt>
-                <dd>{STARTING_LIFE_STAGE === "high-school" ? "High School" : STARTING_LIFE_STAGE}</dd>
+                <dt>{copy.startingStage}</dt>
+                <dd>{STARTING_LIFE_STAGE === "high-school" ? copy.highSchool : STARTING_LIFE_STAGE}</dd>
               </div>
             </dl>
           </section>
 
           <section className="creation-panel biography-panel">
-            <h2>Biography</h2>
+            <h2>{copy.biography}</h2>
             <label>
-              Short biography
+              {copy.shortBiography}
               <textarea
                 value={biography}
                 maxLength={BIOGRAPHY_MAX_LENGTH}
@@ -251,13 +266,10 @@ export function CreateCharacterPage({ character, onCharacterCreated }: CreateCha
           </section>
 
           <section className="creation-panel creation-actions">
-            <h2>Begin</h2>
-            <p>
-              Life & Times begins at sixteen, during high school. The choices from this phase will matter more as
-              education, friendships, reputation, and career systems grow.
-            </p>
+            <h2>{copy.begin}</h2>
+            <p>{copy.beginText}</p>
             <button type="submit" disabled={isProcessingImage}>
-              Create Character
+              {copy.createCharacter}
             </button>
           </section>
         </form>

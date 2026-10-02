@@ -50,6 +50,12 @@ textarea {
   border-bottom: 1px solid var(--line);
 }
 
+.header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
 .brand-block {
   display: flex;
   align-items: center;
@@ -79,6 +85,42 @@ textarea {
   margin: 4px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.language-switch span {
+  padding: 7px 9px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  border-right: 1px solid var(--line);
+}
+
+.language-switch button {
+  min-width: 74px;
+  padding: 7px 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.language-switch button:last-child {
+  border-right: 0;
+}
+
+.language-switch button:hover,
+.language-switch button.active {
+  color: #fff;
+  background: var(--accent-dark);
 }
 
 .status-strip {
@@ -1016,6 +1058,18 @@ textarea {
 @media (max-width: 860px) {
   .app-header {
     flex-direction: column;
+  }
+
+  .header-actions {
+    justify-items: stretch;
+  }
+
+  .language-switch {
+    width: 100%;
+  }
+
+  .language-switch button {
+    flex: 1;
   }
 
   .status-strip {
