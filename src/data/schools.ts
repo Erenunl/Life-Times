@@ -3,7 +3,7 @@ import type { HighSchoolDefinition } from "../types/game";
 export const highSchools: HighSchoolDefinition[] = [
   {
     id: "school-istanbul-central-high",
-    name: "Istanbul Central High School",
+    name: "İstanbul Central High School",
     cityId: "city-istanbul",
     type: "high-school",
   },

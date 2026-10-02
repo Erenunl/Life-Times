@@ -79,7 +79,7 @@ export const createCharacterCopy = {
     tagline: "Yerel oyuncu profilini oluştur",
     startingRules: "Başlangıç kuralları",
     age: "Yaş",
-    lifeStage: "Yasam evresi",
+    lifeStage: "Yaşam evresi",
     highSchool: "Lise",
     profilePhoto: "Profil Fotoğrafı",
     noPhoto: "Fotoğraf yok",
