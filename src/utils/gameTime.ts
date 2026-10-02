@@ -1,4 +1,5 @@
 import type { FormattedGameDate, GameDate } from "../types/game";
+import type { AppLanguage } from "../i18n/language";
 
 const REAL_DAYS_PER_GAME_YEAR = 30;
 const GAME_MONTHS_PER_YEAR = 12;
@@ -32,8 +33,45 @@ export function getGameDate(nowTimestamp = Date.now(), epochTimestamp = GAME_EPO
   };
 }
 
-export function formatGameDate(date: Pick<GameDate, "year" | "month" | "day">): string {
-  return `Year ${date.year}, Month ${date.month}, Day ${date.day}`;
+const monthNames: Record<AppLanguage, string[]> = {
+  en: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+  tr: [
+    "Ocak",
+    "Şubat",
+    "Mart",
+    "Nisan",
+    "Mayıs",
+    "Haziran",
+    "Temmuz",
+    "Ağustos",
+    "Eylül",
+    "Ekim",
+    "Kasım",
+    "Aralık",
+  ],
+};
+
+export function formatGameDate(date: Pick<GameDate, "year" | "month" | "day">, language: AppLanguage = "en"): string {
+  const monthName = monthNames[language][date.month - 1] ?? monthNames.en[0];
+
+  if (language === "tr") {
+    return `${date.day} ${monthName} ${date.year}`;
+  }
+
+  return `${monthName} ${date.day}, ${date.year}`;
 }
 
 export function getBirthDateForAge(currentDate: GameDate, age: number): GameDate {

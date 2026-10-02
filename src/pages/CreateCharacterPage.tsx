@@ -235,7 +235,7 @@ export function CreateCharacterPage({
             <dl className="fixed-rules">
               <div>
                 <dt>{copy.generatedBirthDate}</dt>
-                <dd>{formatGameDate(generatedBirthDate)}</dd>
+                <dd>{formatGameDate(generatedBirthDate, language)}</dd>
               </div>
               <div>
                 <dt>{copy.educationStatus}</dt>
