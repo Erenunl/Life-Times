@@ -97,6 +97,25 @@ create table if not exists public.message_relationship_credits (
   primary key (source_character_id, target_character_id, credit_date)
 );
 
+alter table public.social_interactions
+drop constraint if exists social_interactions_action_check;
+
+alter table public.social_interactions
+add constraint social_interactions_action_check
+check (action in (
+  'wave',
+  'smile',
+  'wink',
+  'hug',
+  'hold_hands',
+  'give_flowers',
+  'ask_date',
+  'blow_kiss',
+  'compliment',
+  'joke',
+  'flirt'
+));
+
 drop trigger if exists mutual_relationships_set_updated_at on public.mutual_relationships;
 create trigger mutual_relationships_set_updated_at
 before update on public.mutual_relationships
